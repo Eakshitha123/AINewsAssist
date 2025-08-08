@@ -5,12 +5,12 @@ from flask_cors import CORS
 import requests
 # from googletrans import Translator  # Commented out to avoid cgi error
 from newsapi import NewsApiClient
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from summa import summarizer
 import os
 
 app = Flask(__name__)
-load_dotenv()
+# load_dotenv()
 CORS(app)
 
 NEWS_API_KEY = os.getenv('NEWS_API_KEY')
