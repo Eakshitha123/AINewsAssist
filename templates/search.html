@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Keyword News Search | AI News Assistant</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1a1b1c;
+      color: #f1f1f1;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #007bff;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 15px;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      padding: 6px 12px;
+      border-radius: 4px;
+    }
+
+    nav ul li a:hover {
+      background-color: rgba(255,255,255,0.2);
+    }
+
+    main {
+      padding: 30px 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    form {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    input[type="text"] {
+      width: 60%;
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+    }
+
+    button {
+      padding: 10px 16px;
+      font-size: 1rem;
+      background-color: #5486e3;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    button:hover {
+      background-color: #2b9fd8;
+    }
+
+    #searchResults {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .article {
+      background-color: #2a2a2a;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .article h3 a {
+      color: #00bfff;
+      text-decoration: none;
+    }
+
+    .article h3 a:hover {
+      text-decoration: underline;
+    }
+
+    .article img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+
+    .article p {
+      color: #ddd;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🧠 AI News Assistant</h1>
+    <nav>
+      <ul>
+        <li><a href="/">Get News</a></li>
+        <li><a href="/summary">Summarize Text</a></li>
+        <li><a href="/url">Summarize from URL</a></li>
+        <li><a href="/search_news">Search News</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2>🔍 Search News by Keyword</h2>
+    <form id="searchForm">
+      <input type="text" id="searchInput" placeholder="Enter keywords like 'climate change'..." required />
+      <button type="submit">Search</button>
+    </form>
+
+    <div id="searchResults"></div>
+  </main>
+
+  <script>
+    document.getElementById('searchForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const keyword = document.getElementById('searchInput').value.trim();
+
+      if (!keyword) return;
+
+      try {
+        const res = await fetch('http://127.0.0.1:5000/search_news', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ keyword })  // Multiple words are now supported
+        });
+
+        const data = await res.json();
+        const resultsDiv = document.getElementById('searchResults');
+        resultsDiv.innerHTML = '';
+
+        if (data.error) {
+          resultsDiv.innerHTML = `<p>Error: ${data.error}</p>`;
+          return;
+        }
+
+        data.forEach(article => {
+          const card = `
+            <div class="article">
+              <h3><a href="${article.url}" target="_blank">${article.title}</a></h3>
+              ${article.image ? `<img src="${article.image}" alt="Image">` : ''}
+              <p>${article.description || 'No description available.'}</p>
+            </div>
+          `;
+          resultsDiv.innerHTML += card;
+        });
+      } catch (err) {
+        document.getElementById('searchResults').innerHTML = `<p>Error fetching results: ${err.message}</p>`;
+      }
+    });
+  </script>
+</body>
+</html>

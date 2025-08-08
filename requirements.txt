@@ -1,0 +1,14 @@
+
+lxml_html_clean
+lxml[html_clean]
+
+Flask==2.3.3
+requests==2.31.0
+textblob==0.17.1
+newspaper3k==0.2.8
+googletrans==4.0.0-rc1
+sumy==0.10.0
+flask-cors==4.0.0
+newsapi-python==0.2.6
+gunicorn==21.2.0
+

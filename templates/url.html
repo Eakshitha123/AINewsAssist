@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Summarize from URL</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1a1b1c;
+      margin: 0;
+      padding: 0;
+      color: white;
+    }
+
+    header {
+      background-color: #007bff;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 15px;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+
+    nav ul li a:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    h2 {
+      color: white;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    form {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+      justify-content: center;
+    }
+
+    input[type="text"],
+    select {
+      padding: 10px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    button {
+      background-color: #007bff;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #resultContainer {
+      display: flex;
+      flex-direction: row;
+      gap: 30px;
+      background-color: #2a2b2d;
+      padding: 20px;
+      border-radius: 10px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .text-content {
+      flex: 2;
+    }
+
+    .text-content p {
+      margin: 10px 0;
+    }
+
+    .text-content strong {
+      color: #00aced;
+    }
+
+    .image-content {
+      flex: 1;
+    }
+
+    .image-content img {
+      width: 100%;
+      border-radius: 10px;
+    }
+
+    #resultContainer h3 {
+      color: #00aced;
+      margin-bottom: 10px;
+    }
+
+    .error {
+      color: red;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🧠 URL Summarizer</h1>
+    <nav>
+      <ul>
+        <li><a href="/">Get News</a></li>
+        <li><a href="/summary">Summarize Text</a></li>
+        <li><a href="/url">Summarize from URL</a></li>
+        <li><a href="/search">Search News</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Paste a News URL to Summarize</h2>
+
+    <form id="urlForm">
+      <input type="text" id="urlInput" placeholder="Paste article URL..." required />
+      <select id="languageSelect">
+        <option value="en">English</option>
+        <option value="hi">Hindi (हिन्दी)</option>
+        <option value="ta">Tamil (தமிழ்)</option>
+        <option value="te">Telugu (తెలుగు)</option>
+        <option value="mr">Marathi (मराठी)</option>
+        <option value="bn">Bengali (বাংলা)</option>
+        <option value="gu">Gujarati (ગુજરાતી)</option>
+        <option value="kn">Kannada (ಕನ್ನಡ)</option>
+        <option value="ml">Malayalam (മലയാളം)</option>
+        <option value="ur">Urdu (اردو)</option>
+      </select>
+      <button type="submit">Summarize</button>
+    </form>
+
+    <div id="resultContainer"></div>
+  </main>
+
+  <script>
+    document.getElementById('urlForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const url = document.getElementById('urlInput').value;
+      const lang = document.getElementById('languageSelect').value;
+
+      const response = await fetch('http://127.0.0.1:5000/summarize_url', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ url, language: lang })
+      });
+
+      const data = await response.json();
+      const container = document.getElementById('resultContainer');
+      container.innerHTML = ''; // clear old content
+
+      if (data.error) {
+        container.innerHTML = `<p class="error">Error: ${data.error}</p>`;
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="text-content">
+          <h3>${data.title}</h3>
+          <p><strong>Author(s):</strong> ${data.authors.join(', ') || 'N/A'}</p>
+          <p><strong>Published Date:</strong> ${data.published_date || 'N/A'}</p>
+          <p><strong>Summary:</strong> ${data.summary}</p>
+          <p><strong>Sentiment:</strong> ${data.sentiment} (Polarity: ${data.polarity.toFixed(2)}, Subjectivity: ${data.subjectivity.toFixed(2)})</p>
+        </div>
+        <div class="image-content">
+          ${data.top_image ? `<img src="${data.top_image}" alt="Article Image">` : ''}
+        </div>
+      `;
+    });
+  </script>
+
+</body>
+</html>

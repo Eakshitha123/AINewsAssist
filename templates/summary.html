@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Summarize Text | AI News Assistant</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1a1b1c;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #007bff;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.6rem;
+    }
+
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      gap: 15px;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+
+    nav ul li a:hover {
+      background-color: rgba(255,255,255,0.2);
+    }
+
+    main {
+      max-width: 800px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    main h2 {
+      color: white;
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+    }
+
+    form textarea {
+      width: 100%;
+      padding: 15px;
+      border-radius: 6px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      resize: vertical;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #summaryOutput {
+      margin-top: 25px;
+      background-color: #2b2d30;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    }
+
+    .output-item {
+      margin-bottom: 15px;
+    }
+
+    .output-item strong {
+      color: #4dd0e1;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📝 Summarize Text</h1>
+    <nav>
+      <ul>
+        <li><a href="/">Get News</a></li>
+        <li><a href="/sumamry">Summarize Text</a></li>
+        <li><a href="/url">Summarize from URL</a></li>
+        <li><a href="/search">Search News</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Paste Your Text Below</h2>
+    <form id="textForm">
+      <textarea id="inputText" rows="10" cols="80" placeholder="Paste article or paragraph here..." ></textarea><br>
+      <button type="submit">Summarize</button>
+    </form>
+
+    <div id="summaryOutput" style="display: none;">
+      <div class="output-item"><strong>Summary:</strong> <span id="summaryText"></span></div>
+      <div class="output-item"><strong>Sentiment:</strong> <span id="sentiment"></span></div>
+      <div class="output-item"><strong>Polarity:</strong> <span id="polarity"></span></div>
+      <div class="output-item"><strong>Subjectivity:</strong> <span id="subjectivity"></span></div>
+    </div>
+  </main>
+
+  <script>
+    document.getElementById('textForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const inputText = document.getElementById('inputText').value.trim();
+      if (!inputText) {
+        alert("please enter the text")
+        return
+      }
+
+      try {
+        const response = await fetch('http://127.0.0.1:5000/summarize_text', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ text: inputText })
+        });
+        console.log(response)
+        const data = await response.json();
+        console.log(data)
+
+        // if (data.error) {
+        //   alert("Error: " + data.error);
+        //   alert("error in data")
+        //   return;
+        // }
+
+        document.getElementById('summaryOutput').style.display = 'block';
+        document.getElementById('summaryText').innerText = data.summary;
+        document.getElementById('sentiment').innerText = data.sentiment;
+        document.getElementById('polarity').innerText = data.polarity;
+        document.getElementById('subjectivity').innerText = data.subjectivity;
+
+      } catch (err) {
+        alert("Failed to fetch summary: " + err.message);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI News Assistant</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1a1b1c;
+      margin: 0;
+      padding: 0;
+      color: #f1f1f1;
+    }
+    #refreshNewsBtn {
+  margin-left: 20px;
+  margin-bottom: 23px;
+  padding: 8px 16px;
+  
+  font-size: 0.9rem;
+  background-color: #5486e3;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#refreshNewsBtn:hover {
+  background-color: #2b9fd8;
+}
+
+    header {
+      background-color: #007bff;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      gap: 15px;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+
+    nav ul li a:hover {
+      background-color: rgba(255,255,255,0.3);
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    #mainheading {
+      color: #fafafa;
+      padding-left: 20px;
+      font-size: 2rem;
+      margin-bottom: 20px;
+      padding-left: 400px;
+    }
+
+    #newsResults {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 50px;
+      color: white;
+    }
+
+    .article {
+      background-color: #2a2a2a;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .article h3 {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      color: #eff5f7;
+    }
+
+    .article h3 a {
+      color: #00bfff;
+      text-decoration: none;
+    }
+
+    .article h3 a:hover {
+      text-decoration: underline;
+    }
+
+    .article p {
+      font-size: 0.95rem;
+      color: #ccc;
+    }
+
+    .article img {
+      margin-top: 10px;
+      border-radius: 10px;
+      max-width: 100%;
+      height: auto;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📰 AI News Assistant </h1>  
+  
+
+    <nav>
+      <ul>
+        <li><a href="/">Get News</a></li>
+        <li><a href="/summary">Summarize Text</a></li>
+        <li><a href="/url">Summarize from URL</a></li>
+        <li><a href="/search">Search News</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2 id="mainheading">Welcome to News Assist  </h2>
+    
+    <div id="newsResults"></div>
+  </main>
+
+  <script>
+    async function fetchDefaultNews() {
+      try {
+        const response = await fetch('http://127.0.0.1:5000/default_news');
+        const articles = await response.json();
+        const newsContainer = document.getElementById('newsResults');
+        newsContainer.innerHTML = '';
+
+        if (articles.error) {
+          newsContainer.innerHTML = `<p>Error: ${articles.error}</p>`;
+          return;
+        }
+
+        // Limit to 12 articles (4 rows of 3)
+        const limitedArticles = articles.slice(0, 12);
+
+        limitedArticles.forEach(article => {
+          const articleDiv = document.createElement('div');
+          articleDiv.className = 'article';
+
+          articleDiv.innerHTML = `
+            <h3><a href="${article.url}" target="_blank" rel="noopener noreferrer">${article.title}</a></h3>
+          
+            ${article.image ? `<img src="${article.image}" alt="Article Image">` : ''}
+              <p>${article.description || ''}</p>
+          `;
+
+          newsContainer.appendChild(articleDiv);
+        });
+      } catch (error) {
+        document.getElementById('newsResults').innerHTML = `<p>Error fetching news: ${error.message}</p>`;
+      }
+    }
+
+    window.onload = () => {
+  fetchDefaultNews();
+  document.getElementById('refreshNewsBtn').addEventListener('click', fetchDefaultNews);
+};
+
+  </script>
+</body>
+</html>
