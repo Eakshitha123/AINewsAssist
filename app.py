@@ -3,7 +3,7 @@ from newspaper import Article
 from textblob import TextBlob
 from flask_cors import CORS
 import requests
-from googletrans import Translator
+# from googletrans import Translator  # Commented out to avoid cgi error
 from newsapi import NewsApiClient
 from dotenv import load_dotenv
 from summa import summarizer
@@ -90,7 +90,7 @@ def summarize_text():
 
     try:
         # Summarize text with summa
-        summary = summarizer.summarize(text, ratio = 0.3)
+        summary = summarizer.summarize(text, ratio=0.3)
         if not summary:
             summary = text  # fallback
 
@@ -126,16 +126,15 @@ def summarize_url():
         if not summary:
             summary = article_text  # fallback
 
-        # Translate summary to requested language
-        translator = Translator()
+        # Commented out googletrans usage to avoid cgi error
+        # translator = Translator()
         translated_summary = summary
         translated_title = article.title
         # if lang != 'en':  # translate only if language is not English
         #     translated = translator.translate(summary, dest=lang)
         #     translated_summary = translated.text
-        #     translated_title = translator.translate(article.title,dest=lang).text
+        #     translated_title = translator.translate(article.title, dest=lang).text
 
-        
         authors = article.authors
         top_image = article.top_image
 
@@ -149,7 +148,7 @@ def summarize_url():
             "title": translated_title,
             "authors": authors,
             "top_image": top_image,
-            "summary": translated_summary,   # translated summary
+            "summary": translated_summary,  # translated summary
             "sentiment": sentiment,
             "polarity": round(polarity, 3),
             "subjectivity": round(subjectivity, 3)
@@ -157,7 +156,7 @@ def summarize_url():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
 
 if __name__ == '__main__':
     app.run(debug=True)
