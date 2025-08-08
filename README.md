@@ -2,6 +2,8 @@ Project Title: News Summarizer and Sentiment Analyzer Web App
 Description:
 Developed a Flask-based web application that allows users to search, summarize, and analyze the sentiment of news articles. Integrated multiple NLP tools to deliver concise insights from raw news data and supported multilingual summarization using translation APIs.
 
+
+working model : https://ainewsassist.onrender.com/
 Key Features:
 
 🔍 News Search & Display: Integrated with NewsAPI to fetch real-time articles based on user-input keywords.
