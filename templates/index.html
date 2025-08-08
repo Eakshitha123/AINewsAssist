@@ -149,7 +149,7 @@
   <script>
     async function fetchDefaultNews() {
       try {
-        const response = await fetch('http://127.0.0.1:5000/default_news');
+        const response = await fetch('default_news');
         const articles = await response.json();
         const newsContainer = document.getElementById('newsResults');
         newsContainer.innerHTML = '';
