@@ -4,6 +4,8 @@ Developed a Flask-based web application that allows users to search, summarize, 
 
 
 working model : https://ainewsassist.onrender.com/
+
+
 Key Features:
 
 🔍 News Search & Display: Integrated with NewsAPI to fetch real-time articles based on user-input keywords.
