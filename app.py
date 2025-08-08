@@ -114,7 +114,7 @@ def summarize_text():
 def summarize_url():
     data = request.json
     url = data.get('url')
-    lang = data.get('language', 'en')  # default to English if not provided
+    lang = 'en'  # default to English if not provided
 
     try:
         article = Article(url)
@@ -130,10 +130,10 @@ def summarize_url():
         translator = Translator()
         translated_summary = summary
         translated_title = article.title
-        if lang != 'en':  # translate only if language is not English
-            translated = translator.translate(summary, dest=lang)
-            translated_summary = translated.text
-            translated_title = translator.translate(article.title,dest=lang).text
+        # if lang != 'en':  # translate only if language is not English
+        #     translated = translator.translate(summary, dest=lang)
+        #     translated_summary = translated.text
+        #     translated_title = translator.translate(article.title,dest=lang).text
 
         
         authors = article.authors
