@@ -152,7 +152,7 @@
       if (!keyword) return;
 
       try {
-        const res = await fetch('http://127.0.0.1:5000/search_news', {
+        const res = await fetch('/search_news', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ keyword })  // Multiple words are now supported
